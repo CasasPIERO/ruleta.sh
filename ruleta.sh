@@ -27,31 +27,37 @@ function martingala(){
   backupBet=$bet
   money=$(($money-$bet))
   while [ $money -ge 0 ]; do
-    #money=$(($money-$bet))
     echo -e "\n[+] Su apuesta es de: S/.$bet y le queda: S/.$money"
     backupMoney=$money
     randomNumber=$((RANDOM % 37))
     if [ $randomNumber -eq 0 ]; then
       echo -e "[-] Usted pierde porque salió el numero $randomNumber"
       bet=$(($bet*2))
-      money=$(($money-$bet))
     else
       if [ $oddEvenBet == "par" ]; then
         if [ $((randomNumber%2)) -eq 0 ]; then
           money=$(($money+$(($bet*2))))
           echo -e "[+] Usted gana porque el numero que salio es: $randomNumber y ahora su dinero actual es de: S/.$money"
           bet=$backupBet
-          money=$(($money-$bet))
         else
           echo -e "[-] Usted pierde porque salio el numero $randomNumber"
           bet=$(($bet*2))
-          money=$(($money-$bet))
+        fi
+      else
+        if [ $((randomNumber%2)) -eq 0 ]; then
+          echo -e "[-] Usted pierde porque salio el numero $randomNumber"
+          bet=$(($bet*2))
+        else
+          money=$(($money+$(($bet*2))))
+          echo -e "[+] Usted gana porque el numero que salio es: $randomNumber y ahora su dinero actual es de: S/.$money"
+          bet=$backupBet
         fi
       fi
     fi
+    money=$(($money-$bet))
   done
 
-  echo -e "\n[+] Su siguiente apuesta sería de S/.$bet pero no cuenta con el dinero suficiente para seguir apostando a través de este método."
+  echo -e "\n[+] Su siguiente apuesta sería de S/.$bet pero no cuenta con el dinero suficiente para seguir apostando a través de esta técnica."
   echo -e "[+] Usted se retira con: S/.$backupMoney"
   echo -e "[+] Se acabó el juego.\n"
 }
