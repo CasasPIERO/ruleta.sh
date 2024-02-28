@@ -63,7 +63,61 @@ function martingala(){
 }
 
 function reverseLabouchere(){
-  echo "Entramos a la función reverseLabouchere"
+  declare -a arrayBets=(1 2 3 4)
+  backupArrayBets=(${arrayBets[@]})
+
+  echo -e "\n[+] Su dinero actual es de: S/.$money\n"
+  echo -n "Desea apostar a número impar o par?: " && read oddEvenBet
+  echo -e "\n[+] Su dinero actual es de: S/.$money y está apostando a los numeros de tipo: $oddEvenBet\n"
+  
+  bet=$((${arrayBets[0]}+${arrayBets[-1]}))
+  let money-=$bet
+  
+  while [ $money -ge 0 ]; do
+    echo -e "\n[+] Su secuencia de apuesta es: ${arrayBets[@]}"
+    echo -e "[+] Su apuesta es de: S/.$bet y le queda: S/.$money"
+    randomNumber=$((RANDOM % 37))
+    if [ $randomNumber -eq 0 ]; then
+      echo -e "[-] Usted pierde porque salió el numero: $randomNumber"
+      if [ ${#arrayBets[@]} -eq 1 ]; then
+        unset arrayBets[0]
+      else
+        unset arrayBets[0]
+        unset arrayBets[-1]
+      fi
+      arrayBets=(${arrayBets[@]})
+    else
+      if [ $oddEvenBet == "par" ]; then
+        if [ $((randomNumber%2)) -eq 0 ]; then
+          money=$(($money+$(($bet*2))))
+          echo -e "[+] Usted gana porque el numero que salio es: $randomNumber y ahora su dinero actual es de: S/.$money"
+          arrayBets+=($bet)
+          arrayBets=(${arrayBets[@]})
+        else
+          echo -e "[-] Usted pierde porque salio el numero $randomNumber"
+          if [ ${#arrayBets[@]} -eq 1 ]; then
+            unset arrayBets[0]
+          else
+            unset arrayBets[0]
+            unset arrayBets[-1]
+          fi
+          arrayBets=(${arrayBets[@]})
+        fi
+      fi
+    fi
+    
+    if [ ${#arrayBets[@]} -eq 0 ]; then
+      arrayBets=(${backupArrayBets[@]})
+      bet=$((${arrayBets[0]}+${arrayBets[-1]}))
+    elif [ ${#arrayBets[@]} -eq 1 ]; then
+      bet=${arrayBets[0]}
+    else
+      bet=$((${arrayBets[0]}+${arrayBets[-1]}))
+    fi
+    
+    let money-=$bet
+  done
+  echo
 }
 
 while getopts "m:t:h" opcion; do
